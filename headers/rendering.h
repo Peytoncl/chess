@@ -12,4 +12,5 @@ extern int tileSizeX;
 extern int tileSizeY;
 
 void Update();
+void Display();
 void Initialize();
