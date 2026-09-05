@@ -5,8 +5,8 @@
 
 // variables //
 
-int windowX;
-int windowY;
+int windowX = 800;
+int windowY = 800;
 
 int tileSizeX;
 int tileSizeY;
@@ -19,16 +19,17 @@ void Display() //runs every frame
 
     // draw board //
 
-    // light tiles
-
-    glColor3ub(lightRGB.r, lightRGB.g, lightRGB.b);
-
     glBegin(GL_QUADS);
 
-    for (int y = 0; y <= 7; y++)
+    for (int y = 0; y < 8; y++)
     {
-        for (int x = 0; x <= 3; x++)
+        for (int x = 0; x < 8; x++)
         {
+            // determine if tile is dark or light (if even then its light and if odd then its dark)
+
+            if ((x + y) % 2 == 0) glColor3ub(lightRGB.r, lightRGB.g, lightRGB.b);
+            else glColor3ub(darkRGB.r, darkRGB.g, darkRGB.b);
+
             int cX1 = tileSizeX * x;
             int cY1 = tileSizeY * y;
 
@@ -55,7 +56,8 @@ void Update()
 
 void Initialize() //runs at startup
 {
-    
+    tileSizeX = windowX / 8;
+    tileSizeY = windowY / 8;
 }
 
 void Resize(int newX, int newY) //runs when the window is resized
@@ -66,6 +68,8 @@ void Resize(int newX, int newY) //runs when the window is resized
     tileSizeX = windowX / 8;
     tileSizeY = windowY / 8;
 
+    gluOrtho2D(0, newX, newY, 0);
+
     glutPostRedisplay();
 }
 
@@ -73,17 +77,24 @@ void Resize(int newX, int newY) //runs when the window is resized
 
 int main(int argc, char *argv[])
 {
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(500, 500);
+    glutInit(&argc, argv);
+
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+    glutInitWindowSize(windowX, windowY);
     glutCreateWindow("chess.exe");
 
-    glutDisplayFunc(Display);
-    glutReshapeFunc(Resize);
+    glClearColor(1, 1, 1, 1);
 
-    Resize(500, 500);
-    Initialize();
-    
+    gluOrtho2D(0, windowX, windowY, 0);
+
+    glutDisplayFunc(Display);
     glutIdleFunc(Update);
 
+    //glutReshapeFunc(Resize);
+
+    Initialize();
+
     glutMainLoop();
+
+    return 0;
 }
