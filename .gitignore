@@ -1,4 +1,6 @@
 .vscode/
+bin
+obj
 export
 source/game.o
 **/Run.bat
