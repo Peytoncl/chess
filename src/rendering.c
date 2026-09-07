@@ -93,7 +93,7 @@ void Display() //runs every frame
 
     gameUpdate = 0;
 
-    printf("Redisplay\n", gameUpdate);
+    //printf("Redisplay\n", gameUpdate);
 
     glutSwapBuffers();
 
