@@ -21,8 +21,6 @@ extern int tileSizeY;
 
 extern GLuint textures[12];
 
-extern int gameUpdate;
-
 void Update();
 void Display();
 void Initialize();

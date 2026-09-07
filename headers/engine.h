@@ -35,10 +35,15 @@ extern uint64_t BR;
 extern uint64_t BQ;
 extern uint64_t BK;
 
+extern uint64_t *bitboards[];
+
+extern int gameUpdate;
+
 extern uint64_t all_white(void);
 extern uint64_t all_black(void);
 extern uint64_t occupied(void);
 extern uint64_t empty(void);
 extern int check_square(int position);
+extern void move_piece(int from, int to);
 
 #endif

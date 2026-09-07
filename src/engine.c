@@ -18,6 +18,8 @@ uint64_t BR = 0x8100000000000000ULL;
 uint64_t BQ = 0x0800000000000000ULL;
 uint64_t BK = 0x1000000000000000ULL;
 
+uint64_t *bitboards[] = { &WP, &WN, &WB, &WR, &WQ, &WK, &BP, &BN, &BB, &BR, &BQ, &BK };
+
 uint64_t all_white(void) { return WP | WN | WB | WR | WQ | WK; } // all white pieces
 
 uint64_t all_black(void) { return BP | BN | BB | BR | BQ | BK; } // all black pieces
@@ -28,27 +30,40 @@ uint64_t empty(void) { return ~occupied(); } // all empty spaces
 
 int check_square(int position) // return integer based on piece enum
 {
-    if (occupied() & (1 << position)) // position is occupied
+    if (occupied() & (1ULL << position)) // position is occupied
     {
-        if (all_white() & (1 << position)) // position is white
+        if (all_white() & (1ULL << position)) // position is white
         {
-            if (WP & (1 << position)) return 0;
-            if (WN & (1 << position)) return 1;
-            if (WB & (1 << position)) return 2;
-            if (WR & (1 << position)) return 3;
-            if (WQ & (1 << position)) return 4;
-            if (WK & (1 << position)) return 5;
+            if (WP & (1ULL << position)) return 0;
+            if (WN & (1ULL << position)) return 1;
+            if (WB & (1ULL << position)) return 2;
+            if (WR & (1ULL << position)) return 3;
+            if (WQ & (1ULL << position)) return 4;
+            if (WK & (1ULL << position)) return 5;
         }
 
-        if (all_black() & (1 << position)) // position is black
+        if (all_black() & (1ULL << position)) // position is black
         {
-            if (BP & (1 << position)) return 6;
-            if (BN & (1 << position)) return 7;
-            if (BB & (1 << position)) return 8;
-            if (BR & (1 << position)) return 9;
-            if (BQ & (1 << position)) return 10;
-            if (BK & (1 << position)) return 11;
+            if (BP & (1ULL << position)) return 6;
+            if (BN & (1ULL << position)) return 7;
+            if (BB & (1ULL << position)) return 8;
+            if (BR & (1ULL << position)) return 9;
+            if (BQ & (1ULL << position)) return 10;
+            if (BK & (1ULL << position)) return 11;
         }
     }
-    else return -1;
+
+    return -1;
+}
+
+void move_piece(int from, int to)
+{
+    enum PIECES fromPiece = check_square(from);
+
+    uint64_t *bitboard = bitboards[fromPiece];
+
+    *bitboard = *bitboard ^ (1ULL << from);
+    *bitboard = *bitboard ^ (1ULL << to);
+
+    gameUpdate = 1;
 }

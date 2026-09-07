@@ -75,8 +75,6 @@ void Display() //runs every frame
 
                 glBindTexture(GL_TEXTURE_2D, textures[piece]);
 
-                printf("texture id: %d\n", textures[piece]);
-
                 glBegin(GL_QUADS);
 
                 glTexCoord2f(0.0f, 0.0f); glVertex2i(cX1, cY1);
@@ -95,7 +93,7 @@ void Display() //runs every frame
 
     gameUpdate = 0;
 
-    printf("Game Updated\n", gameUpdate);
+    printf("Redisplay\n", gameUpdate);
 
     glutSwapBuffers();
 
@@ -144,6 +142,14 @@ void Resize(int newX, int newY) //runs when the window is resized
     glutPostRedisplay();
 }
 
+void Mouse(int button, int state, int x, int y)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        move_piece(12, 28);
+    }
+}
+
 // main //
 
 int main(int argc, char *argv[])
@@ -162,6 +168,7 @@ int main(int argc, char *argv[])
 
     glutDisplayFunc(Display);
     glutIdleFunc(Update);
+    glutMouseFunc(Mouse);
 
     //glutReshapeFunc(Resize);
 
