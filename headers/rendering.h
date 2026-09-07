@@ -19,7 +19,7 @@ extern int windowY;
 extern int tileSizeX;
 extern int tileSizeY;
 
-extern GLuint textures[11];
+extern GLuint textures[12];
 
 extern int gameUpdate;
 

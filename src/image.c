@@ -8,7 +8,12 @@ GLuint load_texture(const char* filename)
     int width, height, channels;
     unsigned char* data = stbi_load(filename, &width, &height, &channels, STBI_rgb_alpha);
 
-    if (!data) return 0;
+    if (!data) 
+    {
+        printf("could not read data of %s\n", filename);
+
+        return 0;
+    }
 
     GLuint textureId;
     glGenTextures(1, &textureId);

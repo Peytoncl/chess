@@ -13,7 +13,7 @@ int windowY = 800;
 int tileSizeX;
 int tileSizeY;
 
-GLuint textures[11];
+GLuint textures[12];
 
 int gameUpdate = 0;
 
@@ -56,7 +56,7 @@ void Display() //runs every frame
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glColor3ub(255, 255, 255);
+    glColor3f(1, 1, 1);
 
     for (int y = 0; y < 8; y++)
     {
@@ -74,18 +74,24 @@ void Display() //runs every frame
                 int cY2 = tileSizeY * y + tileSizeY;
 
                 glBindTexture(GL_TEXTURE_2D, textures[piece]);
+
+                printf("texture id: %d\n", textures[piece]);
+
                 glBegin(GL_QUADS);
 
-                glTexCoord2i(0, 0); glVertex2i(cX1, cY1);
-                glTexCoord2i(1, 0); glVertex2i(cX2, cY1);
-                glTexCoord2i(1, 1); glVertex2i(cX2, cY2);
-                glTexCoord2i(0, 1); glVertex2i(cX1, cY2);
+                glTexCoord2f(0.0f, 0.0f); glVertex2i(cX1, cY1);
+                glTexCoord2f(1.0f, 0.0f); glVertex2i(cX2, cY1);
+                glTexCoord2f(1.0f, 1.0f); glVertex2i(cX2, cY2);
+                glTexCoord2f(0.0f, 1.0f); glVertex2i(cX1, cY2);
 
                 glEnd();
             }
 
         }
     } 
+
+    glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
 
     gameUpdate = 0;
 
@@ -109,19 +115,19 @@ void Initialize() // runs at startup
 
     // load sprites //
 
-    textures[WP_PIECE] = load_texture("sprites/WP.png");
-    textures[WN_PIECE] = load_texture("sprites/WN.png");
-    textures[WB_PIECE] = load_texture("sprites/WB.png");
-    textures[WR_PIECE] = load_texture("sprites/WR.png");
-    textures[WQ_PIECE] = load_texture("sprites/WQ.png");
-    textures[WK_PIECE] = load_texture("sprites/WK.png");
+    textures[WP_PIECE] = load_texture("sprites\\wp.png");
+    textures[WN_PIECE] = load_texture("sprites\\wn.png");
+    textures[WB_PIECE] = load_texture("sprites\\wb.png");
+    textures[WR_PIECE] = load_texture("sprites\\wr.png");
+    textures[WQ_PIECE] = load_texture("sprites\\wq.png");
+    textures[WK_PIECE] = load_texture("sprites\\wk.png");
 
-    textures[BP_PIECE] = load_texture("sprites/BP.png");
-    textures[BN_PIECE] = load_texture("sprites/BN.png");
-    textures[BB_PIECE] = load_texture("sprites/BB.png");
-    textures[BR_PIECE] = load_texture("sprites/BR.png");
-    textures[BQ_PIECE] = load_texture("sprites/BQ.png");
-    textures[BK_PIECE] = load_texture("sprites/BK.png");
+    textures[BP_PIECE] = load_texture("sprites\\bp.png");
+    textures[BN_PIECE] = load_texture("sprites\\bn.png");
+    textures[BB_PIECE] = load_texture("sprites\\bb.png");
+    textures[BR_PIECE] = load_texture("sprites\\br.png");
+    textures[BQ_PIECE] = load_texture("sprites\\bq.png");
+    textures[BK_PIECE] = load_texture("sprites\\bk.png");
 
 }
 
@@ -152,12 +158,12 @@ int main(int argc, char *argv[])
 
     gluOrtho2D(0, windowX, windowY, 0);
 
+    Initialize();
+
     glutDisplayFunc(Display);
     glutIdleFunc(Update);
 
     //glutReshapeFunc(Resize);
-
-    Initialize();
 
     glutMainLoop();
 
