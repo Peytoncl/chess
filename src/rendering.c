@@ -54,10 +54,6 @@ void Display() //runs every frame
     // draw pieces //
 
     glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    int colored = 0; // 0 if render color is currently white, 1 if it is currently hover color
 
     glColor3f(1, 1, 1);
 
@@ -67,9 +63,7 @@ void Display() //runs every frame
         {
             // determine if tile is dark or light (if even then its light and if odd then its dark)
 
-            int position = x + (8 * y);
-
-            enum PIECES piece = check_square(position); // find the enum of the piece
+            enum PIECES piece = check_square(x + (8 * y)); // find the enum of the piece
 
             if (piece != -1) // if piece is not empty
             {
@@ -77,9 +71,6 @@ void Display() //runs every frame
                 int cY1 = tileSizeY * y;
                 int cX2 = tileSizeX * x + tileSizeX;
                 int cY2 = tileSizeY * y + tileSizeY;
-
-                if (position == hoveringPiece) { glColor3f(1, 0, 0); colored = 1; }
-                else if (colored == 1) { glColor3f(1, 1, 1); colored = 0; }
 
                 glBindTexture(GL_TEXTURE_2D, textures[piece]);
 
@@ -96,8 +87,29 @@ void Display() //runs every frame
         }
     } 
 
-    glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
+
+    if (check_square(hoveringPiece) != -1)
+    {
+        int y = (hoveringPiece / 8);
+        int x = (hoveringPiece % 8);
+
+        int cX1 = tileSizeX * x;
+        int cY1 = tileSizeY * y;
+        int cX2 = tileSizeX * x + tileSizeX;
+        int cY2 = tileSizeY * y + tileSizeY;
+
+        glColor4f(0.2f, 0.2f, 0.2f, 0.2f);
+
+        glBegin(GL_QUADS);
+
+        glVertex2i(cX1, cY1);
+        glVertex2i(cX1, cY2);
+        glVertex2i(cX2, cY2);
+        glVertex2i(cX2, cY1);
+
+        glEnd();
+    }
 
     gameUpdate = 0;
 
@@ -114,6 +126,11 @@ void Update()
 
 void Initialize() // runs at startup
 {
+    // graphics setup
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     // adjust tile size //
 
     tileSizeX = windowX / 8;
