@@ -37,7 +37,9 @@ extern uint64_t BK;
 
 extern uint64_t *bitboards[];
 
-extern int gameUpdate;
+extern int selectedPiece; // piece that is currently selected
+extern int hoveringPiece; // piece that the mouse is currently hovering over
+extern int gameUpdate; // 1 if the game needs to rerender and 0 if not
 
 extern uint64_t all_white(void);
 extern uint64_t all_black(void);

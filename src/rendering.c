@@ -15,6 +15,7 @@ int tileSizeY;
 
 GLuint textures[12];
 
+int hoveringPiece = -1;
 int gameUpdate = 0;
 
 // functions //
@@ -56,6 +57,8 @@ void Display() //runs every frame
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    int colored = 0; // 0 if render color is currently white, 1 if it is currently hover color
+
     glColor3f(1, 1, 1);
 
     for (int y = 0; y < 8; y++)
@@ -64,7 +67,9 @@ void Display() //runs every frame
         {
             // determine if tile is dark or light (if even then its light and if odd then its dark)
 
-            enum PIECES piece = check_square(x + (8 * y)); // find the enum of the piece
+            int position = x + (8 * y);
+
+            enum PIECES piece = check_square(position); // find the enum of the piece
 
             if (piece != -1) // if piece is not empty
             {
@@ -72,6 +77,9 @@ void Display() //runs every frame
                 int cY1 = tileSizeY * y;
                 int cX2 = tileSizeX * x + tileSizeX;
                 int cY2 = tileSizeY * y + tileSizeY;
+
+                if (position == hoveringPiece) { glColor3f(1, 0, 0); colored = 1; }
+                else if (colored == 1) { glColor3f(1, 1, 1); colored = 0; }
 
                 glBindTexture(GL_TEXTURE_2D, textures[piece]);
 
@@ -131,22 +139,42 @@ void Initialize() // runs at startup
 
 void Resize(int newX, int newY) //runs when the window is resized
 {
+
+
     windowX = newX;
     windowY = newY;
 
     tileSizeX = windowX / 8;
     tileSizeY = windowY / 8;
 
-    gluOrtho2D(0, newX, newY, 0);
-
-    glutPostRedisplay();
+    //gluOrtho2D(0, windowX, windowY, 0);
 }
 
 void Mouse(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-        move_piece(12, 28);
+        //move_piece(12, 28);
+        gameUpdate = 1;
+    }
+}
+
+void MouseMove(int x, int y)
+{
+    // round positions to the nearest 8 multiple
+
+    int roundedX = (x / tileSizeX) * tileSizeX;
+    int roundedY = (y / tileSizeY) * tileSizeY;
+
+    int pieceX = roundedX / tileSizeX;
+    int pieceY = roundedY / tileSizeY;
+
+    int newHoveringPiece = pieceX + (8 * pieceY);
+
+    if (newHoveringPiece != hoveringPiece)
+    {
+        hoveringPiece = newHoveringPiece;
+        gameUpdate = 1;
     }
 }
 
@@ -169,8 +197,8 @@ int main(int argc, char *argv[])
     glutDisplayFunc(Display);
     glutIdleFunc(Update);
     glutMouseFunc(Mouse);
-
-    //glutReshapeFunc(Resize);
+    glutPassiveMotionFunc(MouseMove);
+    glutReshapeFunc(Resize);
 
     glutMainLoop();
 
