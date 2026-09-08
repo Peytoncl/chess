@@ -15,6 +15,7 @@ int tileSizeY;
 
 GLuint textures[12];
 
+int selectedPiece = -1;
 int hoveringPiece = -1;
 int gameUpdate = 0;
 
@@ -32,10 +33,17 @@ void Display() //runs every frame
     {
         for (int x = 0; x < 8; x++)
         {
-            // determine if tile is dark or light (if even then its light and if odd then its dark)
+            int position = x + (8 * y);
 
-            if ((x + y) % 2 == 0) glColor3ub(lightRGB.r, lightRGB.g, lightRGB.b);
-            else glColor3ub(darkRGB.r, darkRGB.g, darkRGB.b);
+            if (position == selectedPiece) // if piece is selected make checker yellow
+            {
+                glColor3ub(200, 200, 0);
+            }
+            else // if piece is not selected then determine if its a dark or light piece based on if its even or odd
+            {
+                if ((x + y) % 2 == 0) glColor3ub(lightRGB.r, lightRGB.g, lightRGB.b);
+                else glColor3ub(darkRGB.r, darkRGB.g, darkRGB.b);
+            }
 
             int cX1 = tileSizeX * x;
             int cY1 = tileSizeY * y;
@@ -89,6 +97,12 @@ void Display() //runs every frame
 
     glDisable(GL_TEXTURE_2D);
 
+    // draw all gameplay overlays //
+
+    glBegin(GL_QUADS);
+
+    // draw currently hovering piece
+
     if (check_square(hoveringPiece) != -1)
     {
         int y = (hoveringPiece / 8);
@@ -101,15 +115,13 @@ void Display() //runs every frame
 
         glColor4f(0.2f, 0.2f, 0.2f, 0.2f);
 
-        glBegin(GL_QUADS);
-
         glVertex2i(cX1, cY1);
         glVertex2i(cX1, cY2);
         glVertex2i(cX2, cY2);
         glVertex2i(cX2, cY1);
-
-        glEnd();
     }
+
+    glEnd();
 
     gameUpdate = 0;
 
@@ -156,22 +168,38 @@ void Initialize() // runs at startup
 
 void Resize(int newX, int newY) //runs when the window is resized
 {
-
-
     windowX = newX;
     windowY = newY;
 
     tileSizeX = windowX / 8;
     tileSizeY = windowY / 8;
-
-    //gluOrtho2D(0, windowX, windowY, 0);
 }
 
 void Mouse(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-        //move_piece(12, 28);
+        if (hoveringPiece != -1) // select piece
+        {
+            if (hoveringPiece != selectedPiece) // piece isnt selected yet, so select it
+            {
+                if (check_square(hoveringPiece) != -1) // if piece is not empty
+                {
+                    selectedPiece = hoveringPiece;
+                }
+                else if (selectedPiece != -1) // if piece is empty, and you have something selected, attempt to move it there
+                {
+                    move_piece(selectedPiece, hoveringPiece);
+
+                    selectedPiece = -1;
+                }
+            }
+            else // piece is already selected, so deselect it
+            {
+                selectedPiece = -1;
+            }
+        }
+
         gameUpdate = 1;
     }
 }
@@ -215,7 +243,7 @@ int main(int argc, char *argv[])
     glutIdleFunc(Update);
     glutMouseFunc(Mouse);
     glutPassiveMotionFunc(MouseMove);
-    glutReshapeFunc(Resize);
+    //glutReshapeFunc(Resize);
 
     glutMainLoop();
 
